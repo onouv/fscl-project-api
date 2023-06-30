@@ -1,62 +1,75 @@
 package fscl.project.api.events;
 
 import fscl.core.domain.CodeFormat;
+import fscl.core.domain.ProjectCode;
 import fscl.messaging.events.DomainEvent;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
 
-public final class ProjectEvent implements DomainEvent {	
+@Getter
+public class ProjectEvent implements DomainEvent {
 	
-	public final CodeFormat functionConfig;
-	public final CodeFormat systemConfig;
-	public final CodeFormat locationConfig;
-	public final CodeFormat componentConfig;
-	
-	private final Type type;	 
-	private final String projectCode;
+	public final CodeFormat functionFormat;
+	public final CodeFormat locationFormat;
+	public final CodeFormat componentFormat;
+
+	@NonNull private final Type type;
+	@NonNull private final String projectCode;
 		
-	public enum Type { CREATED,	DELETED	}
-	
-	public static ProjectEvent created(
-		String projectCode, 			
-		CodeFormat functionCfg,
-		CodeFormat systemCfg,		
-		CodeFormat componentCfg,
-		CodeFormat locationCfg
-		) {
-		
-		return new ProjectEvent(
-				Type.CREATED, 
-				projectCode, 
-				functionCfg,
-				systemCfg,
-				componentCfg,
-				locationCfg);
-	}
-	
-	public static ProjectEvent deleted(String projectCode) {
-		return new ProjectEvent(Type.DELETED, projectCode, null, null, null, null);
-	}
-	
+	public enum Type { CREATED,	UPDATE, DELETED	}
+
+	@Builder
 	protected ProjectEvent(
-		Type t, 
-		String projectCode,
-		CodeFormat functionCfg,
-		CodeFormat systemCfg,		
-		CodeFormat componentCfg,
-		CodeFormat locationCfg) {
+			Type t,
+			String projectCode,
+			CodeFormat functionFormat,
+			CodeFormat locationFormat,
+			CodeFormat componentFormat) {
 		this.type = t;
 		this.projectCode = projectCode;
-		this.functionConfig = functionCfg;
-		this.systemConfig = systemCfg;
-		this.componentConfig = componentCfg;
-		this.locationConfig = locationCfg;
+		this.functionFormat = functionFormat;
+		this.locationFormat = locationFormat;
+		this.componentFormat = componentFormat;
 	}
 	
-	public String getProjectCode( ) {
-		return this.projectCode;
-	}	
-	
-	public Type getType() {
-		return this.type;
+	public static ProjectEvent created(
+		ProjectCode projectCode,
+		CodeFormat functionFormat,
+		CodeFormat locationFormat,
+		CodeFormat componentFormat
+		) {
+		
+		return ProjectEvent.builder()
+				.functionFormat(functionFormat)
+				.locationFormat(locationFormat)
+				.componentFormat(componentFormat)
+				.projectCode(projectCode.toString())
+				.t(Type.CREATED)
+				.build();
+	}
+
+	public static ProjectEvent update(
+			ProjectCode projectCode,
+			CodeFormat functionFormat,
+			CodeFormat locationFormat,
+			CodeFormat componentFormat
+	) {
+
+		return ProjectEvent.builder()
+				.functionFormat(functionFormat)
+				.locationFormat(locationFormat)
+				.componentFormat(componentFormat)
+				.projectCode(projectCode.toString())
+				.t(Type.UPDATE)
+				.build();
+	}
+
+	public static ProjectEvent deleted(ProjectCode projectCode) {
+		return ProjectEvent.builder()
+				.projectCode(projectCode.toString())
+				.t(Type.DELETED)
+				.build();
 	}
 	
 }
