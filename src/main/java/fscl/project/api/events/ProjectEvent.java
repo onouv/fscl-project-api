@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NonNull;
 
 @Getter
+@Builder
 public class ProjectEvent implements DomainEvent {
 	
 	public final CodeFormat functionFormat;
@@ -19,6 +20,7 @@ public class ProjectEvent implements DomainEvent {
 		
 	public enum Type { CREATED,	UPDATE, DELETED	}
 
+	/*
 	@Builder
 	protected ProjectEvent(
 			Type t,
@@ -32,7 +34,8 @@ public class ProjectEvent implements DomainEvent {
 		this.locationFormat = locationFormat;
 		this.componentFormat = componentFormat;
 	}
-	
+	*/
+
 	public static ProjectEvent created(
 		ProjectCode projectCode,
 		CodeFormat functionFormat,
@@ -45,7 +48,7 @@ public class ProjectEvent implements DomainEvent {
 				.locationFormat(locationFormat)
 				.componentFormat(componentFormat)
 				.projectCode(projectCode.toString())
-				.t(Type.CREATED)
+				.type(Type.CREATED)
 				.build();
 	}
 
@@ -61,14 +64,14 @@ public class ProjectEvent implements DomainEvent {
 				.locationFormat(locationFormat)
 				.componentFormat(componentFormat)
 				.projectCode(projectCode.toString())
-				.t(Type.UPDATE)
+				.type(Type.UPDATE)
 				.build();
 	}
 
 	public static ProjectEvent deleted(ProjectCode projectCode) {
 		return ProjectEvent.builder()
 				.projectCode(projectCode.toString())
-				.t(Type.DELETED)
+				.type(Type.DELETED)
 				.build();
 	}
 	
